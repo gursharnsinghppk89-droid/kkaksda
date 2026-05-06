@@ -9,7 +9,7 @@ import {
   PieChart, Pie, Cell, LineChart, Line, AreaChart, Area 
 } from 'recharts'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 const COLORS = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#ec4899']
 
@@ -41,10 +41,10 @@ export default function AdminDashboard() {
   const loadUsers = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/users`)
+      const res = await fetch(`${API_URL}/admin/users`)
       const data = await res.json()
-      if (data.success) {
-        setUsers(data.data)
+      if (data.users) {
+        setUsers(data.users)
       }
     } catch (err) {
       console.error('Error loading users:', err)

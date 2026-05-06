@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { BiLock, BiUser, BiShow, BiHide } from 'react-icons/bi'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
