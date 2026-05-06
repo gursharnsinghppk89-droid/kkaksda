@@ -138,6 +138,31 @@ app.post('/api/users', async (req, res) => {
   }
 });
 
+// Admin credentials (change these!)
+const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+const ADMIN_PASS = process.env.ADMIN_PASS || 'admin123';
+
+// Admin login
+app.post('/api/admin/login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === ADMIN_USER && password === ADMIN_PASS) {
+    res.json({ success: true, token: 'admin-token-' + Date.now() });
+  } else {
+    res.status(401).json({ success: false, error: 'Invalid credentials' });
+  }
+});
+
+// Admin get users
+app.get('/api/admin/users', async (req, res) => {
+  try {
+    if (!pool) return res.json({ users: [] });
+    const result = await pool.query('SELECT * FROM users ORDER BY created_at DESC LIMIT 100');
+    res.json({ users: result.rows });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
