@@ -41,7 +41,7 @@ export default function AdminDashboard() {
   const loadUsers = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`${API_URL}/admin/users`)
+      const res = await fetch(`${API_URL}/api/admin/users`)
       const data = await res.json()
       if (data.users) {
         setUsers(data.users)
@@ -77,7 +77,7 @@ export default function AdminDashboard() {
     }
 
     try {
-      const res = await fetch(`${API_URL}/admin/change-password`, {
+      const res = await fetch(`${API_URL}/api/admin/change-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ currentPassword, newPassword })
@@ -100,7 +100,7 @@ export default function AdminDashboard() {
   const handleDeleteAllData = async () => {
     if (window.confirm('Are you sure you want to delete all user data? This action cannot be undone.')) {
       try {
-        await fetch(`${API_URL}/users`, { method: 'DELETE' })
+        await fetch(`${API_URL}/api/users`, { method: 'DELETE' })
         setUsers([])
         alert('All data deleted successfully')
       } catch (err) {
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
   const handleDeleteUser = async (id) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
-        await fetch(`${API_URL}/users`, { 
+        await fetch(`${API_URL}/api/users`, { 
           method: 'DELETE',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
